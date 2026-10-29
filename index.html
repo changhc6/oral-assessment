@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-TW"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_top">
+<title>高齡口腔咀嚼吞嚥評估</title>
+<style>
+:root{--p:#2a9d8f;--s:#264653;--g:#2e7d32;--y:#ef6c00;--r:#c62828}
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif}
+body{background:#f4f7f6;color:#222;padding:12px;line-height:1.55}
+.w{max-width:640px;margin:0 auto}
+header{background:linear-gradient(135deg,var(--s),var(--p));color:#fff;padding:18px;border-radius:14px;margin-bottom:12px}
+h1{font-size:20px}header p{font-size:13px;opacity:.9}
+details{background:#fff;border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px #0001}
+summary{padding:14px;font-weight:700;color:var(--s);display:flex;justify-content:space-between;cursor:pointer}
+summary span{font-size:12px;color:#888;font-weight:400}
+.b{padding:0 14px 14px}.hint{font-size:13px;color:#666;background:#eef6f4;padding:8px;border-radius:8px}
+.q{margin:12px 0;font-size:15px}.q p{font-weight:600;margin-bottom:6px}
+.o{display:flex;flex-wrap:wrap;gap:6px}
+.o label{flex:1 1 auto;border:1.5px solid #cfd8d6;border-radius:8px;padding:8px 10px;font-size:14px;cursor:pointer}
+.o input{display:none}
+.o label:has(input:checked){background:var(--p);color:#fff;border-color:var(--p)}
+input[type=text],input[type=number],select{width:100%;padding:10px;border:1.5px solid #cfd8d6;border-radius:8px;font-size:15px;margin:4px 0 8px}
+label.f{font-size:13px;color:#555}
+.btn{width:100%;background:var(--p);color:#fff;border:0;border-radius:10px;padding:14px;font-size:17px;font-weight:700;margin:8px 0}
+.btn.alt{background:#fff;color:var(--s);border:1.5px solid var(--s)}.btn:disabled{opacity:.5}
+.res{background:#fff;border-radius:12px;padding:14px;margin-bottom:10px;border-left:8px solid #999}
+.res.G{border-color:var(--g)}.res.Y{border-color:var(--y)}.res.R{border-color:var(--r)}
+.res h3{font-size:17px}.G h3{color:var(--g)}.Y h3{color:var(--y)}.R h3{color:var(--r)}
+.res ul{margin:6px 0 6px 18px;font-size:14px}.adv{font-size:14px;background:#f6f6f6;padding:8px;border-radius:8px}
+.note{font-size:12px;color:#777;margin:8px 0}.eld{background:#fff8e1;border-radius:8px;padding:8px;font-size:14px;margin-top:8px}.urg{background:#c62828;color:#fff;padding:12px;border-radius:12px;margin-bottom:10px;font-weight:700}.big{font-size:22px;line-height:1.8}.big h3{font-size:24px}
+@media print{.np{display:none}}
+</style></head><body><div class="w">
+<header><h1>🦷 高齡咀嚼吞嚥與口腔健康評估</h1><p>送出後自動判斷並寫入 Google 試算表；Pa-Ta-Ka 可用麥克風自動計次。請用受訪者代號，勿填姓名。</p></header>
+<div class="np" id="form">
+<details open><summary>基本資料</summary><div class="b" id="basic"></div></details>
+<details><summary>緊急狀況檢核</summary><div class="b"><p class="hint">評估當下若出現下列情形，請先停止評估，通知實習督導。</p><div class="o"><label><input type="checkbox" name="urg" value="正在嗆咳或呼吸困難">正在嗆咳或呼吸困難</label><label><input type="checkbox" name="urg" value="劇烈牙痛或臉部腫脹">劇烈牙痛或臉部腫脹</label><label><input type="checkbox" name="urg" value="口腔大片潰瘍或持續出血">口腔大片潰瘍或持續出血</label></div></div></details>
+<div id="sc"></div>
+<details><summary>Pa-Ta-Ka 口腔運動（麥克風自動計次）</summary><div class="b">
+<p class="hint">請在安靜環境，手機麥克風距嘴巴約 10–15 公分。請長者深吸一口氣，盡快、清楚、連續發「pa pa pa…」。每個音測一次；測完請對照耳朵聽到的次數，必要時直接修改「確認後次數」。</p>
+<label class="f">測定秒數</label><select id="odkdur"><option value="5">5 秒</option><option value="10">10 秒</option></select>
+<div id="odkbox"></div></div></details>
+<details><summary>RSST 與小腿圍 <span id="c_ex">0/2</span></summary><div class="b">
+<p class="hint">RSST：安靜坐正，食指、中指輕放喉結上，連續吞口水 30 秒，喉結完全滑過中指算 1 次。6次以上良好；3-5次稍退化；2次以下建議專業協助。</p>
+<label class="f">30 秒內吞嚥次數</label><input type="number" id="rsst" min="0" inputmode="numeric">
+<p class="hint">小腿圍：端坐、大腿與小腿成90°，量小腿最粗處。男性&lt;34 cm、女性&lt;32 cm 表示肌肉量可能不足。</p>
+<label class="f">小腿圍（公分）</label><input type="number" id="calf" step="0.1" inputmode="decimal"></div></details>
+<button class="btn" id="go" onclick="send()">送出評估</button>
+<p class="note">未作答的量表將標示「未完成」，不影響其他項目判斷。</p>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const API='https://script.google.com/macros/s/AKfycbwGhrexCECm6z17Gn0WQAjozcR-wFZ9qVxUsRjN7smRWNLpN8BpIolSnC_mU-KN8-4FPQ/exec';
+const $=s=>document.querySelector(s);
+const R=(a,v)=>a.map((t,i)=>[t,v?v[i]:i]);
+const YN=[['否',0],['是',1]], S1=[['經常反覆','A'],['只有一次','B'],['沒有','C']], S2=[['明顯有','A'],['很少','B'],['沒有','C']], S3=[['經常','A'],['有時候','B'],['沒有','C']];
+const E=R(['0 沒有','1','2','3','4 嚴重']), D3=R(['沒有困難','有一些困難','很困難/無法'],[0,1,2]), F3=R(['容易','有點困難','不能']);
+const SC=[
+{id:'sof',t:'衰弱評估 (SOF)',i:[['體重減輕：沒刻意減重，體重比去年少3公斤或3%以上',YN],['下肢功能：無法不用手支撐從椅子站起5次（用助行器直接選「是」）',YN],['精力降低：過去一個月提不起勁做事或感覺無力',YN]]},
+{id:'eat10',t:'吞嚥能力 (EAT-10)',h:'近3個月，0 = 沒有 … 4 = 嚴重。總分 ≥3 要小心。',i:['吞嚥問題已造成體重減少','吞嚥問題影響外出用餐自由與選擇','吞嚥液體(水/果汁/牛奶)感覺費力','吞嚥固體食物感覺費力','感覺吞藥片或藥丸不好吞入喉','吞嚥東西時感覺疼痛','吞嚥問題影響我吃東西的享受感','吞嚥食物時感覺有卡在喉嚨的感覺','吃東西時會咳嗽','吞嚥東西會感到緊張'].map(q=>[q,E])},
+{id:'seirei',t:'聖隸式吞嚥篩檢',h:'近3個月發生頻率。A 有1個以上＝有吞嚥障礙；B 3個以上＝疑似吞嚥困難。',i:[['最近2-3年是否被診斷肺炎？',S1],['是否感覺變瘦(體重減輕)？',S2],['吃東西時感覺不好吞？',S3],['吃東西會咳嗽？',S3],['喝水(茶/飲料)時曾嗆咳？',S3],['吃飯時或飯後，喉頭卡卡或有咿囉咿囉的聲音？',S3],['吃完後喉嚨仍有食物殘渣異物卡著的感覺？',S3],['吃飯速度變慢、時間變長？',S2],['吃硬的食物時覺得不好吞？',S2],['吃東西時食物從嘴邊掉出來？',S3],['吃東西後嘴巴內仍有食物殘留？',S3],['曾有食物或胃酸逆流到喉嚨？',S3],['曾感覺食物卡在胸口？',S3],['是否因咳嗽無法入睡或驚醒？',S3],['吞嚥食物後，說話有沙啞或嘶啞的聲音？',S2]]},
+{id:'chew',t:'自我咀嚼能力評估',h:'依最近6個月日常飲食選擇。4種以上有困難＝咀嚼能力退化。',i:['水煮花枝、牛排','炒花生','炸雞、雞排','滷豬耳朵、豬肚','整枝水煮玉米、烤玉米','芭樂(切片)','梨子、蘋果(切片)','烤魷魚、雞胗、透抽','整支甘蔗','小黃瓜(切片)、敏豆、蘆筍','竹筍、花椰菜、筊白筍','柳丁(切片)','楊桃、蓮霧(切片)','煮熟的紅、白蘿蔔'].map(q=>[q,F3])},
+{id:'ohat',t:'口腔健康 (OHAT)',h:'依觀察選擇最符合者（0/1/2 分）。',i:[['嘴唇',R(['平滑、粉紅、濕潤','乾裂、嘴角紅','潰瘍、出血'])],['舌頭',R(['粉紅、濕潤可見乳突','蒼白或發紅的乾燥浮腫，1個白斑','潰瘍、出血，多於1個白斑'])],['牙齦組織',R(['粉紅、結實、濕潤','乾燥浮腫，有1個白斑','潰瘍、出血，多於1個白斑'])],['唾液',R(['成水狀、容易吐出','量少而黏稠、不易吐出','量很少且非常黏稠(牽絲)'])],['自然牙',R(['沒有齲齒或斷牙','1-3顆齲齒或斷牙','4顆以上齲齒斷牙；或少於4顆無假牙'])],['假牙',R(['無損壞並規律穿戴；或無假牙','1處損壞，每天穿戴1-2小時','多於1處損壞、沒穿戴；假牙斷裂'])],['口腔清潔',R(['清潔且無食物殘渣','局部牙菌斑或食物殘渣','多處牙菌斑或食物殘渣'])],['牙齒疼痛',R(['無行為、言語或生理表示','有行為或言語表示(拉臉、咬唇、不吃)','有生理現象(臉腫、大片潰瘍)'])]]},
+{id:'tongue',t:'舌苔評估指數 (TCI)',h:'舌頭分9區（左上→右下 1-9），逐區計分：無明顯舌苔0、薄苔1、厚苔2。',i:[1,2,3,4,5,6,7,8,9].map(n=>['第 '+n+' 區',R(['無明顯舌苔','薄苔','厚苔'])])},
+{id:'mna',t:'營養 (MNA-SF)',i:[['A. 過去三個月食量變化（食慾不振、消化、咀嚼吞嚥困難）',R(['嚴重減少','中度減少','沒改變'])],['B. 過去三個月體重下降',R(['>3公斤','不知道','1-3公斤','沒有下降'])],['C. 活動能力',R(['長期臥床/輪椅','可下床但不能外出','可以外出'])],['D. 過去三個月有心理創傷或急性疾病？',R(['有','沒有'],[0,2])],['E. 精神心理問題',R(['嚴重癡呆或憂鬱','輕度癡呆','沒有'])],['F. BMI',R(['<19','19-21','21-23','>23'])]]},
+{id:'sarcf',t:'肌少症 (SARC-F)',h:'總分 ≥4 可能有肌少症。',i:['拿起4-5公斤重的東西','走過一個房間','從床上或椅子起身','走上10個台階'].map(q=>[q+'會感到困難嗎？',D3]).concat([['過去1年跌倒幾次？',R(['沒有','1-3次','4次以上'])]])}
+];
+const sel=(id,l,a)=>`<label class="f">${l}</label><select id="${id}">${a.map(x=>`<option>${x}</option>`).join('')}</select>`;
+$('#basic').innerHTML=`<label class="f">評估者姓名</label><input type="text" id="assessor"><label class="f">學號/班級</label><input type="text" id="sid"><label class="f">受訪者代號（勿填姓名）</label><input type="text" id="subject">`+sel('sex','性別',['','男','女'])+`<label class="f">年齡</label><input type="number" id="age" inputmode="numeric">`+sel('living','居住狀況',['','配偶同住','子女同住','有其他同伴同住','機構','獨居'])+sel('diet','飲食種類',['','普通飲食-飯','軟質飲食-軟飯','細軟質飲食','嬰兒粥','濃流質飲食','細泥質飲食'])+sel('brush','一天刷牙次數',['','無','一次','兩次','三次或以上','偶爾刷牙'])+sel('selfcare','口腔清潔',['','全部自理','部分需人幫忙','全賴旁人幫忙','從不清潔口腔'])+`<label class="f">曾罹患疾病（可複選）</label><div class="o">${['輕度認知障礙','失智','中風','腦外傷','高血壓','糖尿病','肺炎','慢性阻塞性肺病','胃食道逆流','乾燥症','重症肌無力','頭頸癌'].map(x=>`<label><input type="checkbox" name="dis" value="${x}">${x}</label>`).join('')}</div>`;
+$('#sc').innerHTML=SC.map(s=>`<details><summary>${s.t} <span id="c_${s.id}">0/${s.i.length}</span></summary><div class="b">${s.h?`<p class="hint">${s.h}</p>`:''}${s.i.map((it,i)=>`<div class="q"><p>${i+1}. ${it[0]}</p><div class="o">${it[1].map((o,j)=>`<label><input type="radio" name="${s.id}_${i}" value="${j}">${o[0]}</label>`).join('')}</div></div>`).join('')}</div></details>`).join('');
+
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));let AC,STREAM;const AUTO={pa:null,ta:null,ka:null};
+$('#odkbox').innerHTML=['pa','ta','ka'].map(k=>`<div class="q"><p>${k.toUpperCase()}（${{pa:'パ 嘴唇',ta:'タ 舌尖',ka:'カ 舌根'}[k]}）</p><button class="btn alt" onclick="odk('${k}')">🎤 開始測 ${k}</button><p class="note" id="st_${k}"></p><canvas id="cv_${k}" width="300" height="50" style="width:100%;background:#f4f7f6;border-radius:6px"></canvas><label class="f">確認後次數（可修改）</label><input type="number" id="f_${k}" min="0" inputmode="numeric"></div>`).join('');
+function countPeaks(env,hop){const sm=env.map((_,i)=>((env[i-1]??env[i])+env[i]+(env[i+1]??env[i]))/3);
+const s=[...sm].sort((a,b)=>a-b),fl=s[Math.floor(s.length*.1)],pk=s[Math.floor(s.length*.95)];
+if(pk<0.01||pk<fl*3)return{n:null,sm,marks:[]};
+const hi=fl+.4*(pk-fl),lo=fl+.2*(pk-fl);let up=false,n=0,last=-99;const marks=[];
+sm.forEach((v,i)=>{if(!up&&v>hi&&(i-last)*hop>.08){up=true;n++;last=i;marks.push(i)}else if(up&&v<lo)up=false});
+return{n,sm,marks}}
+function draw(k,env,marks){const c=$('#cv_'+k),x=c.getContext('2d'),w=300/env.length,m=Math.max(...env)||1;x.clearRect(0,0,300,50);
+env.forEach((v,i)=>{x.fillStyle='#2a9d8f';const h=v/m*48;x.fillRect(i*w,50-h,Math.max(1,w-.5),h)});marks.forEach(i=>{x.fillStyle='#c62828';x.fillRect(i*w,0,2,50)})}
+async function odk(k){const st=$('#st_'+k),dur=+$('#odkdur').value;
+try{STREAM=STREAM||await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}})}
+catch(e){st.textContent='無法使用麥克風：請允許權限，且網址需為 https';return}
+AC=AC||new(window.AudioContext||window.webkitAudioContext)();await AC.resume();
+const src=AC.createMediaStreamSource(STREAM),sp=AC.createScriptProcessor(1024,1,1),env=[],hop=1024/AC.sampleRate;
+sp.onaudioprocess=e=>{const x=e.inputBuffer.getChannelData(0);let s=0;for(let i=0;i<x.length;i++)s+=x[i]*x[i];env.push(Math.sqrt(s/x.length))};
+for(let n=3;n>0;n--){st.textContent='準備… '+n;await sleep(1000)}
+src.connect(sp);sp.connect(AC.destination);st.textContent='🎤 請開始發「'+k+'」…（'+dur+' 秒）';
+await sleep(dur*1000);src.disconnect();sp.disconnect();
+const r=countPeaks(env,hop);draw(k,r.sm,r.marks);AUTO[k]=r.n;
+if(r.n===null){st.textContent='聲音太小或未偵測到，請靠近麥克風、環境安靜後重測，或直接手動輸入次數';return}
+$('#f_'+k).value=r.n;st.textContent='自動偵測 '+r.n+' 次（'+(r.n/dur).toFixed(1)+' 次/秒）。請對照聽到的次數，必要時修改下方數字。'}
+function ODKDATA(){return{dur:$('#odkdur').value,pa:$('#f_pa').value,ta:$('#f_ta').value,ka:$('#f_ka').value,auto:AUTO}}
+function upd(){SC.forEach(s=>{$('#c_'+s.id).textContent=s.i.filter((_,i)=>document.querySelector(`input[name="${s.id}_${i}"]:checked`)).length+'/'+s.i.length});$('#c_ex').textContent=($('#rsst').value!==''?1:0)+($('#calf').value!==''?1:0)+'/2'}
+document.addEventListener('input',upd);
+function collect(){const g=id=>$('#'+id).value,sc={};
+SC.forEach(s=>sc[s.id]=s.i.map((it,i)=>{const r=document.querySelector(`input[name="${s.id}_${i}"]:checked`);return r?it[1][+r.value][1]:null}));
+return{assessor:g('assessor'),sid:g('sid'),subject:g('subject'),sex:g('sex'),age:g('age'),living:g('living'),diet:g('diet'),brush:g('brush'),selfcare:g('selfcare'),diseases:[...document.querySelectorAll('input[name=dis]:checked')].map(x=>x.value).join('、'),urgent:[...document.querySelectorAll('input[name=urg]:checked')].map(x=>x.value),odk:ODKDATA(),rsst:g('rsst'),calf:g('calf'),scales:sc}}
+async function send(){const d=collect();
+if(!d.subject||!d.assessor)return alert('請先填寫評估者姓名與受訪者代號');
+if(API.startsWith('請'))return alert('尚未設定 Apps Script 網址（見程式開頭 API）');
+$('#go').disabled=true;$('#go').textContent='送出中…';
+try{const res=await fetch(API,{method:'POST',body:JSON.stringify(d)});const r=await res.json();if(r.error)throw new Error(r.error);show(r)}
+catch(e){alert('送出失敗：'+e.message);$('#go').disabled=false;$('#go').textContent='送出評估'}}
+const LB={G:'綠燈・良好',Y:'黃燈・需注意',R:'紅燈・建議轉介',N:'未完成'};let LAST;
+function show(r){LAST=r;
+$('#form').style.display='none';
+$('#out').innerHTML=`<div class="res G np"><b>✅ 已寫入 Google 試算表</b></div>`+(r.urgent&&r.urgent.length?`<div class="urg">⚠️ 緊急狀況：${r.urgent.join('、')}<br>請立即通知實習督導，必要時協助就醫；呼吸困難或嗆噎請撥 119。</div>`:'')+r.domains.map(d=>`<div class="res ${d.lv}"><h3>${d.name}：${LB[d.lv]}</h3><ul>${d.items.map(i=>`<li>${i.name}：${i.text}</li>`).join('')||'<li>尚無完成的量表</li>'}</ul><div class="adv"><b>給學生的建議</b><br>${d.advice.map(a=>'• '+a).join('<br>')}</div>${d.elder.length?`<div class="eld"><b>給長者的衛教（可直接唸給長者聽）</b><br>${d.elder.map(a=>'• '+a).join('<br>')}</div>`:''}</div>`).join('')+`<p class="note">本工具為篩檢參考，不能取代專業診斷；異常請轉介牙科、吞嚥或營養專業人員。</p><button class="btn np" onclick="showElder()">顯示長者版（大字）</button><button class="btn alt np" onclick="window.print()">列印／存成 PDF</button><button class="btn alt np" onclick="location.reload()">評估下一位</button>`;
+scrollTo(0,0)}
+function showElder(){
+$('#out').innerHTML=`<div class="big"><h3>🦷 您的口腔與吞嚥小叮嚀</h3>`+LAST.domains.filter(d=>d.lv!=='N').map(d=>`<div class="res ${d.lv}"><h3>${d.name}：${LB[d.lv]}</h3><p>${d.elder.join('<br>')}</p></div>`).join('')+`<p class="note" style="font-size:16px">若覺得不舒服、嗆咳或牙痛，請馬上告訴家人或醫護人員。</p></div><button class="btn np" onclick="window.print()">列印給長者／家屬</button><button class="btn alt np" onclick="show(LAST)">返回完整結果</button>`;
+scrollTo(0,0)}
+</script></body></html>
