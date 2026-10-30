@@ -39,7 +39,12 @@ label.f{font-size:13px;color:#555}
 <div id="odkbox"></div></div></details>
 <details><summary>RSST、小腿圍與握力 <span id="c_ex">0/3</span></summary><div class="b">
 <p class="hint">RSST：安靜坐正，食指、中指輕放喉結上，連續吞口水 30 秒，喉結完全滑過中指算 1 次。6次以上良好；3-5次稍退化；2次以下建議專業協助。</p>
-<label class="f">30 秒內吞嚥次數</label><input type="number" id="rsst" min="0" inputmode="numeric">
+<div class="q"><div id="rsstTime" style="font-size:56px;text-align:center;font-weight:700;color:var(--s)">30</div>
+<button class="btn" id="rsstGo" onclick="rsstStart()">▶ 開始 30 秒倒數</button>
+<button class="btn alt" id="rsstTap" onclick="rsstTap()" disabled>吞嚥一次 +1（目前 0 次）</button>
+<button class="btn alt" onclick="rsstReset()">重設</button>
+<p class="note">做法：學生一手輕放長者喉結感覺吞嚥，另一手在每次吞嚥時按「吞嚥一次 +1」；時間到會響聲並自動帶入下方次數，也可手動修改。</p></div>
+<label class="f">30 秒內吞嚥次數（倒數結束自動帶入，可修改）</label><input type="number" id="rsst" min="0" inputmode="numeric">
 <p class="hint">小腿圍：端坐、大腿與小腿成90°，量小腿最粗處。男性&lt;34 cm、女性&lt;32 cm 表示肌肉量可能不足。</p>
 <label class="f">小腿圍（公分）</label><input type="number" id="calf" step="0.1" inputmode="decimal"><p class="hint">握力器測試（AWGS）：坐姿或站姿、手臂自然下垂，用力握緊握力器，建議測 2 次取最大值。男性 &lt;28 公斤、女性 &lt;18 公斤為低肌肉力量。</p><label class="f">握力（公斤）</label><input type="number" id="grip" step="0.1" inputmode="decimal"></div></details>
 <button class="btn" id="go" onclick="send()">送出評估</button>
@@ -60,7 +65,7 @@ const SC=[
 {id:'chew',t:'自我咀嚼能力評估',h:'依最近6個月日常飲食選擇。4種以上有困難＝咀嚼能力退化。',i:['水煮花枝、牛排','炒花生','炸雞、雞排','滷豬耳朵、豬肚','整枝水煮玉米、烤玉米','芭樂(切片)','梨子、蘋果(切片)','烤魷魚、雞胗、透抽','整支甘蔗','小黃瓜(切片)、敏豆、蘆筍','竹筍、花椰菜、筊白筍','柳丁(切片)','楊桃、蓮霧(切片)','煮熟的紅、白蘿蔔'].map(q=>[q,F3])},
 {id:'ohat',t:'口腔健康 (OHAT)',h:'依觀察選擇最符合者（0/1/2 分）。',i:[['嘴唇',R(['平滑、粉紅、濕潤','乾裂、嘴角紅','潰瘍、出血'])],['舌頭',R(['粉紅、濕潤可見乳突','蒼白或發紅的乾燥浮腫，1個白斑','潰瘍、出血，多於1個白斑'])],['牙齦組織',R(['粉紅、結實、濕潤','乾燥浮腫，有1個白斑','潰瘍、出血，多於1個白斑'])],['唾液',R(['成水狀、容易吐出','量少而黏稠、不易吐出','量很少且非常黏稠(牽絲)'])],['自然牙',R(['沒有齲齒或斷牙','1-3顆齲齒或斷牙','4顆以上齲齒斷牙；或少於4顆無假牙'])],['假牙',R(['無損壞並規律穿戴；或無假牙','1處損壞，每天穿戴1-2小時','多於1處損壞、沒穿戴；假牙斷裂'])],['口腔清潔',R(['清潔且無食物殘渣','局部牙菌斑或食物殘渣','多處牙菌斑或食物殘渣'])],['牙齒疼痛',R(['無行為、言語或生理表示','有行為或言語表示(拉臉、咬唇、不吃)','有生理現象(臉腫、大片潰瘍)'])]]},
 {id:'tongue',t:'舌苔評估指數 (TCI)',h:'舌頭分9區（左上→右下 1-9），逐區計分：無明顯舌苔0、薄苔1、厚苔2。',i:[1,2,3,4,5,6,7,8,9].map(n=>['第 '+n+' 區',R(['無明顯舌苔','薄苔','厚苔'])])},
-{id:'mna',t:'營養 (MNA-SF)',i:[['A. 過去三個月食量變化（食慾不振、消化、咀嚼吞嚥困難）',R(['嚴重減少','中度減少','沒改變'])],['B. 過去三個月體重下降',R(['>3公斤','不知道','1-3公斤','沒有下降'])],['C. 活動能力',R(['長期臥床/輪椅','可下床但不能外出','可以外出'])],['D. 過去三個月有心理創傷或急性疾病？',R(['有','沒有'],[0,2])],['E. 精神心理問題',R(['嚴重癡呆或憂鬱','輕度癡呆','沒有'])],['F. BMI',R(['<19','19-21','21-23','>23'])]]},
+{id:'mna',t:'營養 (MNA-SF)',h:'F 題（BMI）已由基本資料的身高、體重自動計算，不需填寫。',i:[['A. 過去三個月食量變化（食慾不振、消化、咀嚼吞嚥困難）',R(['嚴重減少','中度減少','沒改變'])],['B. 過去三個月體重下降',R(['>3公斤','不知道','1-3公斤','沒有下降'])],['C. 活動能力',R(['長期臥床/輪椅','可下床但不能外出','可以外出'])],['D. 過去三個月有心理創傷或急性疾病？',R(['有','沒有'],[0,2])],['E. 精神心理問題',R(['嚴重癡呆或憂鬱','輕度癡呆','沒有'])]]},
 {id:'sarcf',t:'肌少症 (SARC-F)',h:'總分 ≥4 可能有肌少症。',i:['拿起4-5公斤重的東西','走過一個房間','從床上或椅子起身','走上10個台階'].map(q=>[q+'會感到困難嗎？',D3]).concat([['過去1年跌倒幾次？',R(['沒有','1-3次','4次以上'])]])}
 ];
 const sel=(id,l,a)=>`<label class="f">${l}</label><select id="${id}">${a.map(x=>`<option>${x}</option>`).join('')}</select>`;
@@ -97,8 +102,16 @@ if(!h||!w){b.className='';b.textContent='';return}
 if(h<1||h>2.2||w<20||w>200){b.className='res';b.textContent='請確認身高（公分）與體重（公斤）是否輸入正確';return}
 const v=Math.round(w/(h*h)*10)/10,c=v<18.5?['體重過輕（消瘦）','R']:v<24?['標準','G']:v<27?['過重','Y']:v<30?['輕度肥胖','Y']:v<35?['中度肥胖','R']:['重度肥胖（過度肥胖）','R'];
 b.className='res '+c[1];b.innerHTML=`<b>BMI ${v.toFixed(1)}：${c[0]}</b>`;
-const r=document.querySelector(`input[name="mna_5"][value="${v<19?0:v<21?1:v<23?2:3}"]`);if(r){r.checked=true;upd()}}
+}
 document.addEventListener('input',bmiUpd);
+let RT=null,RC=0,RE=0,BC;
+function beep(){try{const o=BC.createOscillator();o.frequency.value=880;o.connect(BC.destination);o.start();setTimeout(()=>o.stop(),500)}catch(e){}}
+function rsstReset(keep){clearInterval(RT);RT=null;RC=0;$('#rsstTime').textContent='30';$('#rsstTap').disabled=true;$('#rsstGo').disabled=false;$('#rsstTap').textContent='吞嚥一次 +1（目前 0 次）';if(!keep){$('#rsst').value='';upd()}}
+function rsstStart(){rsstReset(true);try{BC=BC||new(window.AudioContext||window.webkitAudioContext)();BC.resume()}catch(e){}
+RE=Date.now()+30000;$('#rsstTap').disabled=false;$('#rsstGo').disabled=true;
+RT=setInterval(()=>{const left=Math.max(0,Math.ceil((RE-Date.now())/1000));$('#rsstTime').textContent=left;if(left<=0)rsstEnd()},100)}
+function rsstTap(){if(!RT)return;RC++;$('#rsstTap').textContent='吞嚥一次 +1（目前 '+RC+' 次）';if(navigator.vibrate)navigator.vibrate(30)}
+function rsstEnd(){clearInterval(RT);RT=null;$('#rsstTap').disabled=true;$('#rsstGo').disabled=false;$('#rsstTime').textContent='時間到';$('#rsst').value=RC;beep();if(navigator.vibrate)navigator.vibrate([200,100,200]);upd()}
 function upd(){SC.forEach(s=>{$('#c_'+s.id).textContent=s.i.filter((_,i)=>document.querySelector(`input[name="${s.id}_${i}"]:checked`)).length+'/'+s.i.length});$('#c_ex').textContent=($('#rsst').value!==''?1:0)+($('#calf').value!==''?1:0)+($('#grip').value!==''?1:0)+'/3'}
 document.addEventListener('input',upd);
 function collect(){const g=id=>$('#'+id).value,sc={};
