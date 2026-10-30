@@ -37,11 +37,11 @@ label.f{font-size:13px;color:#555}
 <p class="hint">請在安靜環境，手機麥克風距嘴巴約 10–15 公分。請長者深吸一口氣，盡快、清楚、連續發「pa pa pa…」。每個音測一次；測完請對照耳朵聽到的次數，必要時直接修改「確認後次數」。</p>
 <label class="f">測定秒數</label><select id="odkdur"><option value="5">5 秒</option><option value="10">10 秒</option></select>
 <div id="odkbox"></div></div></details>
-<details><summary>RSST 與小腿圍 <span id="c_ex">0/2</span></summary><div class="b">
+<details><summary>RSST、小腿圍與握力 <span id="c_ex">0/3</span></summary><div class="b">
 <p class="hint">RSST：安靜坐正，食指、中指輕放喉結上，連續吞口水 30 秒，喉結完全滑過中指算 1 次。6次以上良好；3-5次稍退化；2次以下建議專業協助。</p>
 <label class="f">30 秒內吞嚥次數</label><input type="number" id="rsst" min="0" inputmode="numeric">
 <p class="hint">小腿圍：端坐、大腿與小腿成90°，量小腿最粗處。男性&lt;34 cm、女性&lt;32 cm 表示肌肉量可能不足。</p>
-<label class="f">小腿圍（公分）</label><input type="number" id="calf" step="0.1" inputmode="decimal"></div></details>
+<label class="f">小腿圍（公分）</label><input type="number" id="calf" step="0.1" inputmode="decimal"><p class="hint">握力器測試（AWGS）：坐姿或站姿、手臂自然下垂，用力握緊握力器，建議測 2 次取最大值。男性 &lt;28 公斤、女性 &lt;18 公斤為低肌肉力量。</p><label class="f">握力（公斤）</label><input type="number" id="grip" step="0.1" inputmode="decimal"></div></details>
 <button class="btn" id="go" onclick="send()">送出評估</button>
 <p class="note">未作答的量表將標示「未完成」，不影響其他項目判斷。</p>
 </div>
@@ -64,7 +64,9 @@ const SC=[
 {id:'sarcf',t:'肌少症 (SARC-F)',h:'總分 ≥4 可能有肌少症。',i:['拿起4-5公斤重的東西','走過一個房間','從床上或椅子起身','走上10個台階'].map(q=>[q+'會感到困難嗎？',D3]).concat([['過去1年跌倒幾次？',R(['沒有','1-3次','4次以上'])]])}
 ];
 const sel=(id,l,a)=>`<label class="f">${l}</label><select id="${id}">${a.map(x=>`<option>${x}</option>`).join('')}</select>`;
-$('#basic').innerHTML=`<label class="f">評估者姓名</label><input type="text" id="assessor"><label class="f">學號/班級</label><input type="text" id="sid"><label class="f">受訪者代號（勿填姓名）</label><input type="text" id="subject">`+sel('sex','性別',['','男','女'])+`<label class="f">年齡</label><input type="number" id="age" inputmode="numeric">`+sel('living','居住狀況',['','配偶同住','子女同住','有其他同伴同住','機構','獨居'])+sel('diet','飲食種類',['','普通飲食-飯','軟質飲食-軟飯','細軟質飲食','嬰兒粥','濃流質飲食','細泥質飲食'])+sel('brush','一天刷牙次數',['','無','一次','兩次','三次或以上','偶爾刷牙'])+sel('selfcare','口腔清潔',['','全部自理','部分需人幫忙','全賴旁人幫忙','從不清潔口腔'])+`<label class="f">曾罹患疾病（可複選）</label><div class="o">${['輕度認知障礙','失智','中風','腦外傷','高血壓','糖尿病','肺炎','慢性阻塞性肺病','胃食道逆流','乾燥症','重症肌無力','頭頸癌'].map(x=>`<label><input type="checkbox" name="dis" value="${x}">${x}</label>`).join('')}</div>`;
+$('#basic').innerHTML=`<label class="f">測試日期</label><input type="date" id="tdate"><label class="f">測試地點</label><input type="text" id="place" placeholder="例如：○○社區關懷據點">
+<label class="f">評估者姓名</label><input type="text" id="assessor"><label class="f">學號/班級</label><input type="text" id="sid"><label class="f">受訪者代號（勿填姓名）</label><input type="text" id="subject">`+sel('sex','性別',['','男','女'])+`<label class="f">年齡</label><input type="number" id="age" inputmode="numeric">`+sel('living','居住狀況',['','配偶同住','子女同住','有其他同伴同住','機構','獨居'])+sel('diet','飲食種類',['','普通飲食-飯','軟質飲食-軟飯','細軟質飲食','嬰兒粥','濃流質飲食','細泥質飲食'])+sel('brush','一天刷牙次數',['','無','一次','兩次','三次或以上','偶爾刷牙'])+sel('selfcare','口腔清潔',['','全部自理','部分需人幫忙','全賴旁人幫忙','從不清潔口腔'])+`<label class="f">曾罹患疾病（可複選）</label><div class="o">${['無','輕度認知功能障礙','輕度失智','中度失智','重度失智','中風','腦外傷','高血壓','糖尿病','肺炎','慢性阻塞性肺病','胃食道逆流','乾燥症','重症肌無力','頭頸癌'].map(x=>`<label><input type="checkbox" name="dis" value="${x}">${x}</label>`).join('')}</div>`+sel('appetite','食慾狀況',['','一向良好','還好','普通','不太好','一向不好'])+`<label class="f">經常攝取水份的方法（可複選）</label><div class="o">${['使用杯子','使用湯匙','使用吸管'].map(x=>`<label><input type="checkbox" name="wat" value="${x}">${x}</label>`).join('')}</div>`+sel('selfrate','自覺口腔衛生習慣',['','很好','好','普通','不好','很不好'])+`<label class="f">常使用的口腔清潔方式（可複選）</label><div class="o">${['無','牙刷/電動牙刷','海綿/紗布','漱口','牙線清潔','牙籤清潔','假牙清潔錠清潔假牙'].map(x=>`<label><input type="checkbox" name="mth" value="${x}">${x}</label>`).join('')}</div>`;
+$('#tdate').value=new Date().toLocaleDateString('sv-SE');
 $('#sc').innerHTML=SC.map(s=>`<details><summary>${s.t} <span id="c_${s.id}">0/${s.i.length}</span></summary><div class="b">${s.h?`<p class="hint">${s.h}</p>`:''}${s.i.map((it,i)=>`<div class="q"><p>${i+1}. ${it[0]}</p><div class="o">${it[1].map((o,j)=>`<label><input type="radio" name="${s.id}_${i}" value="${j}">${o[0]}</label>`).join('')}</div></div>`).join('')}</div></details>`).join('');
 
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));let AC,STREAM;const AUTO={pa:null,ta:null,ka:null};
@@ -90,13 +92,13 @@ const r=countPeaks(env,hop);draw(k,r.sm,r.marks);AUTO[k]=r.n;
 if(r.n===null){st.textContent='聲音太小或未偵測到，請靠近麥克風、環境安靜後重測，或直接手動輸入次數';return}
 $('#f_'+k).value=r.n;st.textContent='自動偵測 '+r.n+' 次（'+(r.n/dur).toFixed(1)+' 次/秒）。請對照聽到的次數，必要時修改下方數字。'}
 function ODKDATA(){return{dur:$('#odkdur').value,pa:$('#f_pa').value,ta:$('#f_ta').value,ka:$('#f_ka').value,auto:AUTO}}
-function upd(){SC.forEach(s=>{$('#c_'+s.id).textContent=s.i.filter((_,i)=>document.querySelector(`input[name="${s.id}_${i}"]:checked`)).length+'/'+s.i.length});$('#c_ex').textContent=($('#rsst').value!==''?1:0)+($('#calf').value!==''?1:0)+'/2'}
+function upd(){SC.forEach(s=>{$('#c_'+s.id).textContent=s.i.filter((_,i)=>document.querySelector(`input[name="${s.id}_${i}"]:checked`)).length+'/'+s.i.length});$('#c_ex').textContent=($('#rsst').value!==''?1:0)+($('#calf').value!==''?1:0)+($('#grip').value!==''?1:0)+'/3'}
 document.addEventListener('input',upd);
 function collect(){const g=id=>$('#'+id).value,sc={};
 SC.forEach(s=>sc[s.id]=s.i.map((it,i)=>{const r=document.querySelector(`input[name="${s.id}_${i}"]:checked`);return r?it[1][+r.value][1]:null}));
-return{assessor:g('assessor'),sid:g('sid'),subject:g('subject'),sex:g('sex'),age:g('age'),living:g('living'),diet:g('diet'),brush:g('brush'),selfcare:g('selfcare'),diseases:[...document.querySelectorAll('input[name=dis]:checked')].map(x=>x.value).join('、'),urgent:[...document.querySelectorAll('input[name=urg]:checked')].map(x=>x.value),odk:ODKDATA(),rsst:g('rsst'),calf:g('calf'),scales:sc}}
+return{tdate:g('tdate'),place:g('place'),assessor:g('assessor'),sid:g('sid'),subject:g('subject'),sex:g('sex'),age:g('age'),living:g('living'),diet:g('diet'),brush:g('brush'),selfcare:g('selfcare'),diseases:[...document.querySelectorAll('input[name=dis]:checked')].map(x=>x.value).join('、'),urgent:[...document.querySelectorAll('input[name=urg]:checked')].map(x=>x.value),odk:ODKDATA(),rsst:g('rsst'),calf:g('calf'),grip:g('grip'),appetite:g('appetite'),selfrate:g('selfrate'),water:[...document.querySelectorAll('input[name=wat]:checked')].map(x=>x.value).join('、'),methods:[...document.querySelectorAll('input[name=mth]:checked')].map(x=>x.value).join('、'),scales:sc}}
 async function send(){const d=collect();
-if(!d.subject||!d.assessor)return alert('請先填寫評估者姓名與受訪者代號');
+if(!d.tdate||!d.place||!d.subject||!d.assessor)return alert('請先填寫測試日期、測試地點、評估者姓名與受訪者代號');
 if(API.startsWith('請'))return alert('尚未設定 Apps Script 網址（見程式開頭 API）');
 $('#go').disabled=true;$('#go').textContent='送出中…';
 try{const res=await fetch(API,{method:'POST',body:JSON.stringify(d)});const r=await res.json();if(r.error)throw new Error(r.error);show(r)}
